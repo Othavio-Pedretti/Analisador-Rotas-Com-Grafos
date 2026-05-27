@@ -1,20 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-//#include "graph.cpp"
+#include "graph.cpp"
 
 using namespace std;
 
 int main(int argc, char *argv[]){
-    string prb_id;
-    string probe_src;
-    string dst_addr;
-    float rtt;
-    string hop_from;
-    string hop_to;
-    string hop;
+    string prb_id, probe_src, dst_addr, rtt, hop_from, hop_to, hop;
     ifstream arquivo_entrada;
     string entrada;
+    graph::digraph g;
     for (int i = 1; i < argc; ++i) {
         entrada += argv[i];
     }
@@ -31,12 +26,20 @@ int main(int argc, char *argv[]){
    while (getline(arquivo_entrada, linha))
    {
         stringstream ss(linha);
-        if(getline(ss, prb_id, ',') && getline(ss, probe_src, ',')){
-            cout << prb_id << "\n"
-                << probe_src << "\n";
+        if(getline(ss, prb_id, ',') 
+           && getline(ss, probe_src, ',') 
+           && getline(ss, dst_addr, ',') 
+           && getline(ss, hop, ',') 
+           && getline(ss, hop_from, ',') 
+           && getline(ss, hop_to, ',') 
+           && getline(ss, rtt, ',')){
+            
+            g.insert_nodo(hop, prb_id, probe_src, dst_addr, rtt);
+
         }
    }
    
+    cout << g.size() << " nodos" << endl;
     arquivo_entrada.close();
     return 0;
 }

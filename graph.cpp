@@ -16,7 +16,7 @@ namespace graph{
             std::string prb_id;
             std::string probe_src;
             std::string dst_addr;
-            float rtt;
+            std::string rtt;
             std::vector<node*> links; //lista de ponteiros p/ os nodos vizinhos - ARESTAS
           };
 
@@ -27,17 +27,27 @@ namespace graph{
         
         public:
          //Insere um novo nó no grafo com o rótulo s
-          void insert_nodo(const std::string& s){
+          void insert_nodo(const std::string& hop, 
+                            const std::string& prb_id, 
+                            const std::string& probe_src, 
+                            const std::string& dst_addr, 
+                            const std::string& rtt){
             node aux;
-            aux.value = s;
-            nodes[s] = aux;
+            aux.prb_id = prb_id;
+            aux.probe_src = probe_src;
+            aux.dst_addr = dst_addr;
+            aux.rtt = rtt; 
+            nodes[hop] = aux;
           }
+
+          
 
           //retorna a quantidade de nós (vertices) do grafo
           size_t size(){
             return nodes.size();
           }
-
+            
+          /*
           //busca um nó pelo seu rótulo e retorna o endereço do nodo 
           node* find(const std::string& s){
             auto it = nodes.find(s);//este find é do unordere_map
@@ -153,6 +163,7 @@ namespace graph{
             visited.clear();
             recursive_DFS(p);
           }
+        */
     }; /// fim da classe digraph
 
 } //fim do namespace
