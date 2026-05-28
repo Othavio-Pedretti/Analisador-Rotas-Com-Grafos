@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
            && getline(ss, hop_to, ',') 
            && getline(ss, rtt)){
             if(hop_from != "" && hop_to != ""){}
-                g.insert_nodo(hop, prb_id, probe_src, dst_addr, rtt);
+                g.insert_nodo(hop, prb_id, probe_src,hop_from,hop_to, dst_addr, rtt);
 
         }
    }

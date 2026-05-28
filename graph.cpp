@@ -14,7 +14,7 @@ namespace graph{
           // nodos do grafo - VERTÍCES
           struct node{
             std::string prb_id;
-            std::string probe_src;
+            std::string probe_src; // value do nodo
             std::string dst_addr;
             std::string hop;
             std::vector<node*> hop_from;
@@ -31,15 +31,17 @@ namespace graph{
          //Insere um novo nó no grafo com o rótulo s
           void insert_nodo(const std::string& hop, 
                             const std::string& prb_id, 
-                            const std::string& probe_src, 
+                            const std::string& probe_src,
+                            const node*& hop_from,
+                            const node*& hop_to,
                             const std::string& dst_addr, 
                             const std::string& rtt){
             node aux;
             aux.prb_id = prb_id;
             aux.probe_src = probe_src;
             aux.dst_addr = dst_addr;
-            aux.rtt = rtt; 
-            nodes[hop] = aux;
+            aux.rtt = rtt;
+            
           }
 
           
