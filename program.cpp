@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include "graph.cpp"
 
 using namespace std;
@@ -32,9 +33,9 @@ int main(int argc, char *argv[]){
            && getline(ss, hop, ',') 
            && getline(ss, hop_from, ',') 
            && getline(ss, hop_to, ',') 
-           && getline(ss, rtt, ',')){
-            
-            g.insert_nodo(hop, prb_id, probe_src, dst_addr, rtt);
+           && getline(ss, rtt)){
+            if(hop_from != "" && hop_to != ""){}
+                g.insert_nodo(hop, prb_id, probe_src, dst_addr, rtt);
 
         }
    }

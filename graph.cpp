@@ -16,8 +16,10 @@ namespace graph{
             std::string prb_id;
             std::string probe_src;
             std::string dst_addr;
+            std::string hop;
+            std::vector<node*> hop_from;
+            std::vector<node*> hop_to;
             std::string rtt;
-            std::vector<node*> links; //lista de ponteiros p/ os nodos vizinhos - ARESTAS
           };
 
           //tabela hash, que mapeia o rótulo do nó para o objeto node
