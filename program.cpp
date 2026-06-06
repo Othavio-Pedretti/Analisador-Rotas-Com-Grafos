@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
             if(hop_to != "*"){
                 if(hop_from != " " || hop_to != " "){
                     map[prb_id].nodes[hop] = {probe_src, dst_addr, rtt, hop_from};
-                    map[prb_id].nodes[hop].links.push_back();
+                    map[prb_id].nodes[hop].links.push_back(hop_to);
                 }
             }
         }
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
             std::cout << "    dst_addr: "  << node.dst_addr  << "\n";
             std::cout << "    rtt: "       << node.rtt       << "\n";
             std::cout << "    hop_from: "  << node.hop_from  << "\n";
-            std::cout << "    hop_to:";
+            std::cout << "    links:";
             for (auto& destino : node.links) {
                 std::cout << " " << destino;
             }

@@ -62,7 +62,7 @@ namespace graph{
             auto pto = find(hop_to);
             if(pto == nullptr) return false; // nó de destino ñ existe
 
-            pfrom->hop_to.push_back(pto); //Adiciona a aresta na lista de adjacencia
+            pfrom->links.push_back(pto); //Adiciona a aresta na lista de adjacencia
             return true;
           }
           
@@ -70,7 +70,7 @@ namespace graph{
           size_t outdegree(const std::string& s){
             for(auto node : nodes){
               if(node.first == s){
-                return node.second.hop_to.size();
+                return node.second.links.size();
               }
             }
             return 0;
@@ -84,7 +84,7 @@ namespace graph{
             }
             size_t qnt = 0;
             for(auto vertice : nodes){
-                for(auto link : vertice.second.hop_to)
+                for(auto link : vertice.second.links)
                   if(link == s){
                     qnt++;
                   }
@@ -108,9 +108,9 @@ namespace graph{
             
             for(auto nd : nodes){
                   dot << "\t\"" << nd.first << "\"";
-                      if(nd.second.hop_to.size() > 0){
+                      if(nd.second.links.size() > 0){
                           dot << " -> { ";
-                          for(auto vizinho : nd.second.hop_to){
+                          for(auto vizinho : nd.second.links){
                               dot << "\"" << vizinho->hop_to << "\"";
                           }
                           dot << "}";
