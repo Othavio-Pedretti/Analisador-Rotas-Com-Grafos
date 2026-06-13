@@ -41,10 +41,15 @@ int main(int argc, char *argv[]){
              
             if(hop_to != "*"){
                 if(hop_from != " " || hop_to != " "){
-                    map[prb_id].nodes[hop_from] = {hop, probe_src, dst_addr, rtt};
-                    map[prb_id].nodes[hop_from].links.push_back(hop_to);
-                    vertices++;
-                    arestas++;
+                    map[prb_id].nodes[hop] = {probe_src, dst_addr, rtt, hop_from};
+                    for(auto& [prb_id, digrafo] : map){
+                        for(auto& [hop, node] : digrafo.nodes){
+                            if(hop_from == digrafo.nodes[hop].hop_from){
+                                node.links.push_back(hop_to);
+                                arestas++;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -53,9 +58,8 @@ int main(int argc, char *argv[]){
 
    for (auto& [prb_id, digrafo] : map) {
     std::cout << "prb_id: " << prb_id << "\n";
-        for (const auto& [hop_from, node] : digrafo.nodes) {
-            std::cout << "  hop_from: " << hop_from << "\n";
-            std::cout << "    hop: " << node.hop << "\n";
+        for (const auto& [hop, node] : digrafo.nodes) {
+            std::cout << "    hop: " << hop << "\n";
             std::cout << "    probe_src: " << node.probe_src << "\n";
             std::cout << "    dst_addr: "  << node.dst_addr  << "\n";
             std::cout << "    rtt: "       << node.rtt       << "\n";

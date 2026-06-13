@@ -14,11 +14,11 @@ namespace graph{
           // nodos do grafo - VERTÍCES
           struct node{
             //std::string prb_id;
-            std::string hop;
+            //std::string hop;
             std::string probe_src;
             std::string dst_addr;
             std::string rtt;
-            //std::string hop_from;
+            std::string hop_from;
             std::vector<std::string> links; //lista de ponteiros p/ os nodos vizinhos - ARESTAS
           };
 
