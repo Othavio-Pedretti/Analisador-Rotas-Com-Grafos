@@ -47,13 +47,15 @@ int main(int argc, char *argv[]){
                     for(auto& [prb_id, digrafo] : map){
                         for(auto& [hop, node] : digrafo.nodes){
                             for(auto& link : node.links){
-                                if(link == hop_to){
+                                if(link != hop_to){
+                                    existeArestaIgual = false;
+                                }else{
                                     existeArestaIgual = true;
+                                }
+                                
+                                if(existeArestaIgual == true){
                                     break;
                                 }
-                            }
-                            if(existeArestaIgual == true){
-                                break;
                             }
                             if(hop_from == digrafo.nodes[hop].hop_from){
                                 node.links.push_back(hop_to);
@@ -103,20 +105,25 @@ int main(int argc, char *argv[]){
         "3: Documento (PDF)" << endl;
         int escolha;
         cin >> escolha;
+        ofstream dot("graphED2.dot"); // cria o arquivo        
         if(escolha == 1){
-            ofstream dot("graphED2.dot"); // cria o arquivo
             dot << "digraph {\n";
-            for(auto& [prb_id, digrafo] : map){
-                for(auto& [hop, node] : digrafo.nodes){
-                    for(auto& link : node.links){
-                        dot << "t\"" << node.hop_from << "\"  << -> << \"" << link << "\";\n";
+                for (auto& [prb_id, digrafo] : map) {
+                    for (auto& [hop, node] : digrafo.nodes) {
+                        if (node.links.empty())
+                            continue;
+                        dot << "\"" << node.hop_from << "\" -> {";
+                        for (auto& link : node.links) {
+                            dot << "\"" << link << "\" ";
+                        }
+                        dot << "};\n";
                     }
                 }
-            }
-            dot << "}\n";
+
+                dot << "}\n";
+                system("dot -Tpng graphED2.dot -o grafo.png"); 
         }
         else if(escolha == 2){
-            ofstream dot("graphED2.dot"); // cria o arquivo
             dot << "digraph {\n";
             for(auto& [prb_id, digrafo] : map){
                 for(auto& [hop, node] : digrafo.nodes){
