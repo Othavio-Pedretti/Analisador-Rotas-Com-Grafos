@@ -26,6 +26,7 @@ int main(int argc, char *argv[]){
    }
 
    string linha;
+   bool existeAresta = false;
    while (getline(arquivo_entrada, linha))
    {
 
@@ -42,8 +43,18 @@ int main(int argc, char *argv[]){
             if(hop_to != "*"){
                 if(hop_from != " " || hop_to != " "){
                     map[prb_id].nodes[hop] = {probe_src, dst_addr, rtt, hop_from};
+                    vertices++;
                     for(auto& [prb_id, digrafo] : map){
                         for(auto& [hop, node] : digrafo.nodes){
+                            for(auto& link : node.links){
+                                if(link == hop_to){
+                                    existeAresta = true;
+                                    break;
+                                }
+                            }
+                            if(existeAresta == true){
+                                break;
+                            }
                             if(hop_from == digrafo.nodes[hop].hop_from){
                                 node.links.push_back(hop_to);
                                 arestas++;
@@ -60,6 +71,7 @@ int main(int argc, char *argv[]){
     std::cout << "prb_id: " << prb_id << "\n";
         for (const auto& [hop, node] : digrafo.nodes) {
             std::cout << "    hop: " << hop << "\n";
+            std::cout << "    hop_from: " << node.hop_from << "\n";
             std::cout << "    probe_src: " << node.probe_src << "\n";
             std::cout << "    dst_addr: "  << node.dst_addr  << "\n";
             std::cout << "    rtt: "       << node.rtt       << "\n";
