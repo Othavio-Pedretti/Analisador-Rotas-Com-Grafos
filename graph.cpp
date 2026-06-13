@@ -102,32 +102,38 @@ namespace graph{
             return indegree(s) + outdegree(s);
           }
           
-          /*
+          */
+         
+
+
           void export2dot(const std::string& filename){
             std::ofstream dot(filename); // cria o arquivo
             dot << "digraph {\n";
             
-            for(auto nd : nodes){
-                  dot << "\t\"" << nd.first << "\"";
-                      if(nd.second.links.size() > 0){
-                          dot << " -> { ";
-                          for(auto vizinho : nd.second.links){
-                              dot << "\"" << vizinho->hop_to << "\"";
-                          }
-                          dot << "}";
-                      }
-                      dot << ";\n";
-                  }
-            dot << "}\n";//fecha chaves do digraph
+            for(auto& nd : nodes){
+              for(auto& link : nd.second.links){
+                dot << "t\"" << nd.second.hop_from << "\"  << -> << \"" << link << "\";\n";
+              }
+            }
             
-          }
+          };
           
-          void draw(){
+          
+          void draWhithScreen(){
+            export2dot("graphED2.dot");
+            //std::system("dot -Tpng graphED2.dot -o grafo.png");
+            std::system("dot -Tx11 graphED2.dot"); //funciona para linux, para windows tem que ser "dot -Tx11 graphED2.dot"
+          }
+
+          //funciona apenas para windows nesse momento pq o comando exibe imagem no windows
+          //ESTUDAR COMO EXIBIR IMAGEM NO LINUX
+          void drawPNG(){
             export2dot("graphED2.dot");
             std::system("dot -Tpng graphED2.dot -o grafo.png");
-            //std::system("dot -Tx11 graphED2.dot"); LINUX
+            //std::system("dot -Tx11 graphED2.dot"); //funciona para linux, para windows tem que ser "dot -Tx11 graphED2.dot"
           }
-        
+
+        /*
           
           void remove_link(const std::string &from, const std::string &to){
             auto pfrom = find(from);
