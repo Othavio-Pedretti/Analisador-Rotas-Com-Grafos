@@ -3,15 +3,18 @@
 #include <sstream>
 #include "graph.cpp"
 #include <unordered_map>
+#include <vector>
+#include <queue>
 
 using namespace std;
+
+std::unordered_map<std::string, graph::digraph> graph::map;
 
 int main(int argc, char *argv[]){
     string prb_id, probe_src, dst_addr, rtt, hop_from, hop_to, hop;
     ifstream arquivo_entrada;
     string entrada;
     graph::digraph g;
-    unordered_map<string, graph::digraph> map;
     int arestas = 0;
     int vertices = 0;
     for (int i = 1; i < argc; ++i) {
@@ -26,7 +29,6 @@ int main(int argc, char *argv[]){
    }
 
    string linha;
-   bool existeArestaIgual = false;
    while (getline(arquivo_entrada, linha))
    {
 
@@ -42,45 +44,22 @@ int main(int argc, char *argv[]){
              
             if(hop_to != "*"){
                 if(hop_from != " " || hop_to != " "){
-                    map[prb_id].nodes[hop] = {probe_src, dst_addr, rtt, hop_from};
+                    g.insert_nodo(prb_id, hop, probe_src, dst_addr, hop_from, rtt);
                     vertices++;
-                    for(auto& [prb_id, digrafo] : map){
-                        for(auto& [hop, node] : digrafo.nodes){
-                            for(auto& link : node.links){
-                                if(link == hop_to){
-                                    existeArestaIgual = true;
-                                    break;
-                                }
-                            }
-                            if(existeArestaIgual == false){
-                                if(hop_from == digrafo.nodes[hop].hop_from){
-                                    node.links.push_back(hop_to);
-                                    arestas++;
-                                }
-                            }
-                        }
+                    
+                    bool existeArestaIgual = g.existe_aresta(hop_from, hop_to);
+                    if(existeArestaIgual == false){
+                        g.insert_link(hop_from, hop_to);
+                        arestas++;
                     }
+                
                 }
             }
         }
    }
    
 
-   for (auto& [prb_id, digrafo] : map) {
-    std::cout << "prb_id: " << prb_id << "\n";
-        for (const auto& [hop, node] : digrafo.nodes) {
-            std::cout << "    hop: " << hop << "\n";
-            std::cout << "    hop_from: " << node.hop_from << "\n";
-            std::cout << "    probe_src: " << node.probe_src << "\n";
-            std::cout << "    dst_addr: "  << node.dst_addr  << "\n";
-            std::cout << "    rtt: "       << node.rtt       << "\n";
-            std::cout << "    links:";
-            for (auto& destino : node.links) {
-                std::cout << " " << destino;
-            }
-            std::cout << "\n";
-        }
-    }
+   
     cout << "Carregamento inicial concluído! Foram inseridos " << vertices << " vertices e " << arestas << " arestas" << endl;
     arquivo_entrada.close();
     cout << "======MENU======" << endl <<
@@ -104,48 +83,32 @@ int main(int argc, char *argv[]){
         cin >> escolha;
         ofstream dot("graphED2.dot"); // cria o arquivo        
         if(escolha == 1){
-            dot << "digraph {\n";
-                for (auto& [prb_id, digrafo] : map) {
-                    for (auto& [hop, node] : digrafo.nodes) {
-                        if (node.links.empty())
-                            continue;
-                        dot << "\"" << node.hop_from << "\" -> {";
-                        for (auto& link : node.links) {
-                            dot << "\"" << link << "\" ";
-                        }
-                        dot << "};\n";
-                    }
-                }
-
-                dot << "}\n";
-                /// Gera o grafo usando o Graphviz com saida em uma tela
+            g.exibe_grafo();
         }
         else if(escolha == 2){
-            dot << "digraph {\n";
-            for(auto& [prb_id, digrafo] : map){
-                for(auto& [hop, node] : digrafo.nodes){
-                    for(auto& link : node.links){
-                        dot << "t\"" << node.hop_from << "\"  << -> << \"" << link << "\";\n";
-                    }
-                }
-            }
-            dot << "}\n";
-            system("dot -Tpng graphED2.dot -o grafo.png");
+            g.drawPNG();
         }
         else if(escolha == 3){
-            dot << "digraph {\n";
-            for(auto& [prb_id, digrafo] : map){
-                for(auto& [hop, node] : digrafo.nodes){
-                    for(auto& link : node.links){
-                        dot << "t\"" << node.hop_from << "\"  << -> << \"" << link << "\";\n";
-                    }
-                }
-            }
-            dot << "}\n";
-            system("dot -Tpdf graphED2.dot -o grafo.pdf");
+            g.drawPDF();
         }
         
         
+    }else if (usuario == 2){
+        cout << "Digite o IP de Origem:" << endl;
+        string ipOrigem;
+        cin >> ipOrigem;
+        cout << "Digite o IP de Destino:" << endl;
+        string ipDestino;
+        cin >> ipDestino;
+        //logica de encontrar o menor caminho entre os dois nós usando o algoritmo BFS
+    }
+    else if(usuario == 3){
+        cout << "Encontrando o menor caminho..." << endl;
+        // Implementar a lógica para encontrar o menor caminho entre dois nós
+    }
+    else if(usuario == 4){
+        cout << "Calculando o diâmetro do grafo..." << endl;
+        // Implementar a lógica para calcular o diâmetro do grafo
     }
     else if(usuario == 5){
         cout << "Saindo do programa..." << endl;
@@ -157,4 +120,4 @@ int main(int argc, char *argv[]){
     
     
     return 0;
-}
+};

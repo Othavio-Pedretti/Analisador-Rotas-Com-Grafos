@@ -1,4 +1,5 @@
 /// biblioteca para grafos
+#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -9,8 +10,11 @@
 
 namespace graph{
 
+  class digraph; // declaração antecipada da classe digraph
+  extern std::unordered_map<std::string, digraph> map; 
+
     class digraph{
-        public:
+        private:
           // nodos do grafo - VERTÍCES
           struct node{
             //std::string prb_id;
@@ -29,19 +33,32 @@ namespace graph{
         
         public:
          //Insere um novo nó no grafo com o rótulo s
-          void insert_nodo(//const std::string& hop, 
+          void insert_nodo(const std::string& prb_id,
+                            const std::string& hop, 
                             const std::string& probe_src, 
                             const std::string& dst_addr,
                             const std::string& hop_from,
                             const std::string& rtt){
-            node aux;
-            aux.probe_src = probe_src;
-            aux.dst_addr = dst_addr;
-            aux.rtt = rtt; 
-            nodes[hop_from] = aux;
+            map[prb_id].nodes[hop] = {probe_src, dst_addr, rtt, hop_from};
           }
 
-          
+          void exibe_grafo(){
+            for (auto& [prb_id, digrafo] : map) {
+            std::cout << "prb_id: " << prb_id << "\n";
+                for (const auto& [hop, node] : digrafo.nodes) {
+                    std::cout << "    hop: " << hop << "\n";
+                    std::cout << "    hop_from: " << node.hop_from << "\n";
+                    std::cout << "    probe_src: " << node.probe_src << "\n";
+                    std::cout << "    dst_addr: "  << node.dst_addr  << "\n";
+                    std::cout << "    rtt: "       << node.rtt       << "\n";
+                    std::cout << "    links:";
+                    for (auto& destino : node.links) {
+                        std::cout << " " << destino;
+                    }
+                    std::cout << "\n";
+                }
+            }
+          }
 
           //retorna a quantidade de nós (vertices) do grafo
           size_t size(){
@@ -51,22 +68,42 @@ namespace graph{
           
           //busca um nó pelo seu rótulo e retorna o endereço do nodo 
           node* find(const std::string& s){
-            auto it = nodes.find(s);//este find é do unordere_map
-            return it==nodes.end() ?  nullptr : &it->second;
+            for(auto& [prb_id, digrafo] : map){
+                for(auto& [hop, node] : digrafo.nodes){
+                    if(node.hop_from == s){
+                        return &node;
+                    }
+                }
+            }
+
+            return nullptr;
           }
 
-          /*
+          
           //INsere um aresta dirigida de 'from' para 'to'
           bool insert_link(const std::string& hop_from, const std::string& hop_to){
-            auto pfrom = find(hop_from);
-            if(pfrom == nullptr) return false; // nó de origem ñ existe
-            auto pto = find(hop_to);
-            if(pto == nullptr) return false; // nó de destino ñ existe
-
-            pfrom->links.push_back(pto); //Adiciona a aresta na lista de adjacencia
-            return true;
+            for(auto& [prb_id, digrafo] : map){
+                for(auto& [hop, node] : digrafo.nodes){
+                    if(node.hop_from == hop_from){
+                        node.links.push_back(hop_to);
+                        return true;
+                    }
+                }
+             }
+             return false;
           }
           
+          //existe uma aresta de?
+          bool existe_aresta(const std::string& vertice, const std::string& novoLink){
+            auto p = find(vertice);
+            for (auto& link : p->links){
+                if(link == novoLink){
+                    return true;
+                }
+            }
+             return false;
+          }
+          /*
           //numero de arestas que saem de um vertice
           size_t outdegree(const std::string& s){
             for(auto node : nodes){
@@ -108,15 +145,20 @@ namespace graph{
 
           void export2dot(const std::string& filename){
             std::ofstream dot(filename); // cria o arquivo
-            dot << "digraph {\n";
-            
-            for(auto& nd : nodes){
-              for(auto& link : nd.second.links){
-                dot << "t\"" << nd.second.hop_from << "\"  << -> << \"" << link << "\";\n";
-              }
-            }
-            
-          };
+              dot << "digraph {\n";
+                    for (auto& [prb_id, digrafo] : map) {
+                        for (auto& [hop, node] : digrafo.nodes) {
+                            if (node.links.empty())
+                                continue;
+                            dot << "\"" << node.hop_from << "\" -> {";
+                            for (auto& link : node.links) {
+                                dot << "\"" << link << "\" ";
+                            }
+                            dot << "};\n";
+                        }
+                    }
+                    dot << "}\n";
+            };
           
           
           void draWhithScreen(){
@@ -131,6 +173,11 @@ namespace graph{
             export2dot("graphED2.dot");
             std::system("dot -Tpng graphED2.dot -o grafo.png");
             //std::system("dot -Tx11 graphED2.dot"); //funciona para linux, para windows tem que ser "dot -Tx11 graphED2.dot"
+          }
+
+          void drawPDF(){
+            export2dot("graphED2.dot");
+            std::system("dot -Tpdf graphED2.dot -o grafo.pdf");
           }
 
         /*
@@ -175,5 +222,4 @@ namespace graph{
           }
         */
     }; /// fim da classe digraph
-
 } //fim do namespace
