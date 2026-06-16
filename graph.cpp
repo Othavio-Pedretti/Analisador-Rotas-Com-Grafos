@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <unordered_set>
+#include <queue>
 
 namespace graph{
 
@@ -161,23 +162,25 @@ namespace graph{
             };
           
           
-          void draWhithScreen(){
+          void draWhithScreen(const std::string& input){
             export2dot("graphED2.dot");
-            //std::system("dot -Tpng graphED2.dot -o grafo.png");
-            std::system("dot -Tx11 graphED2.dot"); //funciona para linux, para windows tem que ser "dot -Tx11 graphED2.dot"
+            std::string command = "dot -Tx11 graphED2.dot -o " + input + ".png";
+
+            std::system(command.c_str());
           }
 
           //funciona apenas para windows nesse momento pq o comando exibe imagem no windows
           //ESTUDAR COMO EXIBIR IMAGEM NO LINUX
-          void drawPNG(){
+          void drawPNG(const std::string& input){
             export2dot("graphED2.dot");
-            std::system("dot -Tpng graphED2.dot -o grafo.png");
-            //std::system("dot -Tx11 graphED2.dot"); //funciona para linux, para windows tem que ser "dot -Tx11 graphED2.dot"
+            std::string command = "dot -Tpng graphED2.dot -o " + input + ".png";
+            std::system(command.c_str());
           }
 
-          void drawPDF(){
+          void drawPDF(const std::string& input){
             export2dot("graphED2.dot");
-            std::system("dot -Tpdf graphED2.dot -o grafo.pdf");
+            std::string command = "dot -Tpdf graphED2.dot -o " + input + ".pdf";
+            std::system(command.c_str());
           }
 
         /*
@@ -221,5 +224,66 @@ namespace graph{
             recursive_DFS(p);
           }
         */
+        std::vector<std::string> shortest_path(const std::string &from,
+                                                const std::string &to)
+        {
+          std::vector<std::string> path;
+          auto pfrom = find(from);
+          if (!pfrom)
+            return path;
+
+          auto pto = find(to);
+          if (!pto)
+            return path;
+
+          if (pfrom == pto)
+          {
+            path.push_back(from);
+            return path;
+          }
+
+          std::unordered_map<node *, node *> source;
+          std::queue<node *> q;
+          q.push(pfrom);
+          source[pfrom] = nullptr;
+          bool found = false;
+
+          while (!q.empty())
+          {
+            auto current = q.front();
+            q.pop();
+            if (current == pto)
+            {
+              found = true;
+              break;
+            }
+            for(auto [prb_id, digrafo] : map){
+                for(auto [hop, node] : digrafo.nodes){
+                    if(node.hop_from == current->hop_from){
+                        for(auto &n : node.links){
+                            auto p = find(n);
+                            if (source.count(p) == 0)
+                            {
+                                q.push(p);
+                                source[p] = current;
+                            }
+                        }
+                    }
+                }
+              }
+              
+          }
+          if (found)
+          {
+            auto p = pto;
+            while (p != nullptr)
+            {
+              path.push_back(p->hop_from);
+              p = source[p];
+            }
+            std::reverse(path.begin(), path.end());
+          }
+          return path;
+        }
     }; /// fim da classe digraph
 } //fim do namespace

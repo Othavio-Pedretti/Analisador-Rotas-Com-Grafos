@@ -86,10 +86,10 @@ int main(int argc, char *argv[]){
             g.exibe_grafo();
         }
         else if(escolha == 2){
-            g.drawPNG();
+            g.drawPNG(argv[1]);
         }
         else if(escolha == 3){
-            g.drawPDF();
+            g.drawPDF(argv[1]);
         }
         
         
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]){
         cout << "Digite o IP de Destino:" << endl;
         string ipDestino;
         cin >> ipDestino;
-        //logica de encontrar o menor caminho entre os dois nós usando o algoritmo BFS
+        auto path = g.shortest_path(ipOrigem, ipDestino);
     }
     else if(usuario == 3){
         cout << "Encontrando o menor caminho..." << endl;
